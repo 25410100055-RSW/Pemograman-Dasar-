@@ -1,64 +1,63 @@
 import java.util.ArrayList;
 import java.util.Scanner;
+
 public class Praktikum {
 
-    // Konversi nilai huruf ke bobot
+    // nilai huruf ke bobot (sesuai Pedoman S1 SI Universitas Dinamika 2025)
+
     static double konversiNilai(String nilai) {
         switch (nilai.toUpperCase()) {
-            case "A":  return 4.00;
-            case "AB": return 3.50;
-            case "B":  return 3.00;
-            case "BC": return 2.50;
-            case "C":  return 2.00;
-            case "D":  return 1.00;
-            case "E":  return 0.00;
+            case "A":  return 4.0;
+            case "B+": return 3.5;
+            case "B":  return 3.0;
+            case "C+": return 2.5;
+            case "C":  return 2.0;
+            case "D":  return 1.0;
+            case "E":  return 0.0;
             default:   return -1;
         }
     }
 
     // Tentukan beban SKS maksimal berdasarkan IPS
-    static int tentukanMaksSKS(double ips) {
+    // Semester 1 & 2 maksimal 20 SKS 
+    // Semester 3+ mengikuti tabel IPS 
+    static int tentukanMaksSKS(double ips, int semester) {
+        if (semester <= 2) {
+            return 20; // Semester 1 & 2 maks 20 SKS sesuai pedoman
+        }
         if (ips >= 3.50) return 24;
         else if (ips >= 3.00) return 22;
         else if (ips >= 2.00) return 20;
         else return 18;
     }
 
-    // Tampilkan tabel konversi nilai
     static void tampilkanTabelNilai() {
-        System.out.println("\n  +--------+-------+");
-        System.out.println("  | Nilai  | Bobot |");
-        System.out.println("  +--------+-------+");
-        System.out.println("  | A      | 4.00  |");
-        System.out.println("  | AB     | 3.50  |");
-        System.out.println("  | B      | 3.00  |");
-        System.out.println("  | BC     | 2.50  |");
-        System.out.println("  | C      | 2.00  |");
-        System.out.println("  | D      | 1.00  |");
-        System.out.println("  | E      | 0.00  |");
-        System.out.println("  +--------+-------+");
+        System.out.println("   Nilai Akhir  Huruf   Bobot  Keterangan  ");
+        System.out.println("   80 - 100       A      4.0   Istimewa    ");
+        System.out.println("   75 - 79        B+     3.5   Memuaskan   ");
+        System.out.println("   65 - 74        B      3.0   Baik        ");
+        System.out.println("   60 - 64        C+     2.5   Sedang      ");
+        System.out.println("   55 - 59        C      2.0   Cukup       ");
+        System.out.println("   40 - 54        D      1.0   Kurang      ");
+        System.out.println("    0 - 39        E      0.0   Gagal       ");
+
     }
 
-    // Tampilkan tabel aturan SKS
     static void tampilkanTabelIPS() {
-        System.out.println("\n  +---------------+------------------+");
-        System.out.println("  |      IPS      | Maks SKS Semester|");
-        System.out.println("  +---------------+------------------+");
-        System.out.println("  | >= 3.50       |        24        |");
-        System.out.println("  | 3.00 - 3.49   |        22        |");
-        System.out.println("  | 2.00 - 2.99   |        20        |");
-        System.out.println("  | < 2.00        |        18        |");
-        System.out.println("  +---------------+------------------+");
+        System.out.println("        IPS       Beban Belajar Maks ");
+        System.out.println("   >= 3.50              24 SKS       ");
+        System.out.println("   3.00 - 3.49          22 SKS       ");
+        System.out.println("   2.00 - 2.99          20 SKS       ");
+        System.out.println("   < 2.00               18 SKS       ");
     }
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        System.out.println("\n============================================================");
-        System.out.println("  KALKULATOR IPS & BEBAN SKS MAHASISWA");
-        System.out.println("  Program Studi : Sistem Informasi");
-        System.out.println("  Semester      : 2 (Dua)");
-        System.out.println("============================================================");
+        System.out.println("  KALKULATOR IPK & BEBAN SKS MAHASISWA");
+        System.out.println("  Program Studi : S1 Sistem Informasi");
+        System.out.println("  Universitas   : Universitas Dinamika");
+        System.out.println("  Pedoman       : Pedoman Akademik S1 SI 2025");
 
         tampilkanTabelNilai();
         tampilkanTabelIPS();
@@ -66,16 +65,32 @@ public class Praktikum {
         boolean ulang = true;
 
         while (ulang) {
-            ArrayList<String> namaMK   = new ArrayList<>();
-            ArrayList<Integer> sksMK  = new ArrayList<>();
-            ArrayList<String> nilaiMK = new ArrayList<>();
+            // Input semester aktif
+            int semester = 0;
+            while (true) {
+                System.out.print("\n  Semester aktif saat ini : ");
+                try {
+                    semester = Integer.parseInt(sc.nextLine().trim());
+                    if (semester < 1) {
+                        System.out.println("  [!] Semester tidak valid.");
+                        continue;
+                    }
+                    break;
+                } catch (NumberFormatException e) {
+                    System.out.println("  [!] Masukkan angka semester.");
+                }
+            }
 
-            System.out.println("\n  Masukkan mata kuliah yang ditempuh semester ini.");
-            System.out.println("  (Ketik 'selesai' pada nama MK untuk mengakhiri input)\n");
+            ArrayList<String>  namaMK  = new ArrayList<>();
+            ArrayList<Integer> sksMK   = new ArrayList<>();
+            ArrayList<String>  nilaiMK = new ArrayList<>();
+
+            System.out.println("\n  Masukkan mata kuliah semester " + semester + ".");
+            System.out.println("  (Ketik 'selesai' pada nama MK untuk mengakhiri input nilai)\n");
 
             int nomor = 1;
             while (true) {
-                System.out.println("  --- Mata Kuliah #" + nomor + " ---");
+                System.out.println("   Mata Kuliah " + nomor + ":");
 
                 // Input nama MK
                 System.out.print("  Nama Mata Kuliah : ");
@@ -104,20 +119,20 @@ public class Praktikum {
                     }
                 }
 
-                // Input nilai
+                // Input nilai huruf
                 String nilai = "";
-                System.out.println("  Nilai yang valid : A, AB, B, BC, C, D, E");
+                System.out.println("  Nilai yang valid : A, B+, B, C+, C, D, E");
                 while (true) {
                     System.out.print("  Nilai Huruf      : ");
                     nilai = sc.nextLine().trim().toUpperCase();
                     if (konversiNilai(nilai) != -1) break;
-                    System.out.println("  [!] Nilai tidak valid. Gunakan: A, AB, B, BC, C, D, E");
+                    System.out.println("  [!] Nilai tidak valid. Gunakan: A, B+, B, C+, C, D, E");
                 }
 
                 namaMK.add(nama);
                 sksMK.add(sks);
                 nilaiMK.add(nilai);
-                System.out.println("  Mata kuliah '" + nama + "' berhasil ditambahkan.\n");
+                System.out.println("  ✓ '" + nama + "' berhasil ditambahkan.\n");
                 nomor++;
             }
 
@@ -127,50 +142,62 @@ public class Praktikum {
             for (int i = 0; i < namaMK.size(); i++) {
                 double bobot = konversiNilai(nilaiMK.get(i));
                 totalBobotSKS += bobot * sksMK.get(i);
-                totalSKS += sksMK.get(i);
+                totalSKS      += sksMK.get(i);
             }
 
-            double ips = (totalSKS == 0) ? 0.0 : Math.round((totalBobotSKS / totalSKS) * 100.0) / 100.0;
-            int maksSKS = tentukanMaksSKS(ips);
+            double ips    = (totalSKS == 0) ? 0.0 : Math.round((totalBobotSKS / totalSKS) * 100.0) / 100.0;
+            int    maksSKS = tentukanMaksSKS(ips, semester);
 
             // Tampilkan ringkasan
-            System.out.println("\n============================================================");
-            System.out.println("  RINGKASAN HASIL PERHITUNGAN IPS");
-            System.out.println("============================================================");
-            System.out.printf("\n  %-4s %-25s %-5s %-6s %s%n", "No", "Mata Kuliah", "SKS", "Nilai", "Bobot");
-            System.out.println("  " + "-".repeat(52));
+            System.out.println("  RINGKASAN HASIL PERHITUNGAN IPS - SEMESTER " + semester);
+            System.out.printf("\n  %-4s %-24s %-5s %-5s %-6s %s%n",
+                    "No", "Mata Kuliah", "SKS", "Nilai", "Bobot", "Keterangan");
+            System.out.println("  " + "-".repeat(60));
 
             for (int i = 0; i < namaMK.size(); i++) {
                 double bobot = konversiNilai(nilaiMK.get(i));
-                System.out.printf("  %-4d %-25s %-5d %-6s %.2f%n",
-                        i + 1, namaMK.get(i), sksMK.get(i), nilaiMK.get(i), bobot);
+                String ket   = getKeterangan(nilaiMK.get(i));
+                System.out.printf("  %-4d %-24s %-5d %-5s %-6.1f %s%n",
+                        i + 1, namaMK.get(i), sksMK.get(i), nilaiMK.get(i), bobot, ket);
             }
 
-            System.out.println("  " + "-".repeat(52));
+            System.out.println("  " + "-".repeat(60));
             System.out.printf("  %-35s %d SKS%n", "Total SKS Ditempuh", totalSKS);
             System.out.printf("  %-35s %.2f%n", "Indeks Prestasi Semester (IPS)", ips);
-            System.out.println("============================================================");
+            System.out.printf("  IPS Semester " + semester + "                        : %.2f%n", ips);
+            System.out.printf("  Beban SKS Maks Semester Berikutnya  : %d SKS%n", maksSKS);
+            System.out.println("  Predikat                             : " + getPredikat(ips));
 
-            System.out.printf("  IPS Anda                             : %.2f%n", ips);
-            System.out.printf("  Beban SKS Maksimal Semester Depan   : %d SKS%n", maksSKS);
+            if (semester <= 2) {
+                System.out.println("  * Batas 20 SKS berlaku untuk Semester 1 & 2 (Pasal 5 ayat 6a)");
+            }
 
-            String predikat;
-            if      (ips >= 3.50) predikat = "Sangat Memuaskan";
-            else if (ips >= 3.00) predikat = "Memuaskan";
-            else if (ips >= 2.00) predikat = "Cukup";
-            else                  predikat = "Kurang - Perlu Bimbingan Akademik";
 
-            System.out.println("  Predikat                             : " + predikat);
-            System.out.println("============================================================");
-
-            // Tanya ulang
-            System.out.print("\n  Apakah ingin menghitung ulang? (y/t) : ");
-            String jawab = sc.nextLine().trim().toLowerCase();
-            ulang = jawab.equals("y");
+            System.out.print("\n  Hitung ulang? (y/t) : ");
+            ulang = sc.nextLine().trim().equalsIgnoreCase("y");
         }
 
-        System.out.println("\n  Terima kasih! Semangat kuliah semester 2!");
-        System.out.println("============================================================\n");
+        System.out.println("\n  Terima kasih! Semangat kuliah! Sukses selalu!");
         sc.close();
+    }
+
+    static String getKeterangan(String nilai) {
+        switch (nilai.toUpperCase()) {
+            case "A":  return "Istimewa";
+            case "B+": return "Memuaskan";
+            case "B":  return "Baik";
+            case "C+": return "Sedang";
+            case "C":  return "Cukup";
+            case "D":  return "Kurang";
+            case "E":  return "Gagal";
+            default:   return "-";
+        }
+    }
+
+    static String getPredikat(double ips) {
+        if      (ips >= 3.50) return "Dengan Pujian (Cumlaude)";
+        else if (ips >= 3.00) return "Sangat Memuaskan";
+        else if (ips >= 2.00) return "Memuaskan";
+        else                  return "Kurang - Harap Konsultasi Dosen Wali";
     }
 }
